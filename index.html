@@ -69,36 +69,56 @@
         .abstract-content {
             transition: max-height 0.35s ease-in-out, opacity 0.3s ease-in-out;
         }
+
+        /* Tranziție la schimbarea paginilor (SPA view) */
+        @keyframes pageFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page-view {
+            display: none;
+        }
+
+        .page-view.active {
+            display: block;
+            animation: pageFadeIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-200 antialiased selection:bg-primary-500 selection:text-white">
+<body class="min-h-screen flex flex-col bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-200 antialiased selection:bg-primary-500 selection:text-white">
 
     <!-- Bara de navigare fixă -->
-    <header class="fixed top-0 left-0 right-0 z-50 glass-nav bg-white/80 dark:bg-slate-900/80 border-b border-slate-200/80 dark:border-slate-800/80">
+    <header class="fixed top-0 left-0 right-0 z-50 glass-nav bg-white/85 dark:bg-slate-900/85 border-b border-slate-200/80 dark:border-slate-800/80">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <!-- Logo / Nume -->
-                <a href="#acasa" class="flex items-center space-x-2 text-lg font-bold tracking-tight text-slate-900 dark:text-white hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+                <a href="#acasa" data-route="acasa" class="nav-link flex items-center space-x-2.5 text-lg font-bold tracking-tight text-slate-900 dark:text-white hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
                     <span class="w-8 h-8 rounded-lg bg-primary-600 text-white flex items-center justify-center font-serif text-sm shadow-sm">AI</span>
                     <span>Dr. Andrei Ionescu</span>
                 </a>
 
                 <!-- Meniu Desktop -->
-                <nav class="hidden md:flex items-center space-x-8 text-sm font-medium">
-                    <a href="#despre" class="text-slate-600 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Despre mine</a>
-                    <a href="#interese" class="text-slate-600 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Interese</a>
-                    <a href="#publicatii" class="text-slate-600 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Publicații</a>
-                    <a href="#contact" class="text-slate-600 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Contact</a>
+                <nav class="hidden md:flex items-center space-x-2 text-sm font-medium" aria-label="Navigare principală">
+                    <a href="#acasa" data-route="acasa" class="nav-link px-3.5 py-2 rounded-xl transition-all">Acasă &amp; Profil</a>
+                    <a href="#interese" data-route="interese" class="nav-link px-3.5 py-2 rounded-xl transition-all">Interese</a>
+                    <a href="#publicatii" data-route="publicatii" class="nav-link px-3.5 py-2 rounded-xl transition-all">Publicații</a>
                 </nav>
 
                 <!-- Butoane Acțiuni (Temă + Meniu Mobil) -->
                 <div class="flex items-center space-x-2">
-                    <button id="theme-toggle" aria-label="Comută tema întunecată/luminoasă" class="p-2.5 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                    <button id="theme-toggle" aria-label="Comută tema întunecată/luminoasă" class="p-2.5 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
                         <i data-lucide="moon" class="w-5 h-5 hidden dark:block"></i>
                         <i data-lucide="sun" class="w-5 h-5 block dark:hidden"></i>
                     </button>
                     
-                    <button id="mobile-menu-btn" aria-label="Deschide meniul" class="md:hidden p-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                    <button id="mobile-menu-btn" aria-label="Deschide meniul" class="md:hidden p-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
                         <i data-lucide="menu" class="w-5 h-5"></i>
                     </button>
                 </div>
@@ -107,19 +127,28 @@
 
         <!-- Meniu Mobil (ascuns implicit) -->
         <div id="mobile-menu" class="hidden md:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 pt-2 pb-4 space-y-1 shadow-lg">
-            <a href="#despre" class="mobile-link block px-3 py-2.5 rounded-lg text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Despre mine</a>
-            <a href="#interese" class="mobile-link block px-3 py-2.5 rounded-lg text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Interese</a>
-            <a href="#publicatii" class="mobile-link block px-3 py-2.5 rounded-lg text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Publicații</a>
-            <a href="#contact" class="mobile-link block px-3 py-2.5 rounded-lg text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Contact</a>
+            <a href="#acasa" data-route="acasa" class="nav-link mobile-link block px-3.5 py-2.5 rounded-xl text-base font-medium transition-colors">Acasă &amp; Profil</a>
+            <a href="#interese" data-route="interese" class="nav-link mobile-link block px-3.5 py-2.5 rounded-xl text-base font-medium transition-colors">Interese</a>
+            <a href="#publicatii" data-route="publicatii" class="nav-link mobile-link block px-3.5 py-2.5 rounded-xl text-base font-medium transition-colors">Publicații</a>
         </div>
     </header>
 
-    <!-- Conținut Principal -->
-    <main class="pt-24 pb-16">
+    <!-- Conținut Principal (Aplicație Multi-Pagină) -->
+    <main class="flex-1 pt-24 pb-16">
         
-        <!-- 1. Secțiunea Hero / Descriere Personală -->
-        <section id="acasa" class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-16 md:pt-14 md:pb-24">
-            <div id="despre" class="scroll-mt-24 flex flex-col-reverse md:flex-row items-center md:items-start gap-10 md:gap-12">
+        <!-- =================================================================== -->
+        <!-- PAGINA 1: ACASĂ / DESPRE MINE (#acasa)                              -->
+        <!-- =================================================================== -->
+        <section id="page-acasa" class="page-view active max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-10 md:pt-10">
+            
+            <!-- Indicator pagină curentă -->
+            <div class="mb-6 flex items-center space-x-2 text-xs font-medium text-slate-500 dark:text-slate-400">
+                <span>Portofoliu</span>
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                <span class="text-primary-600 dark:text-primary-400 font-semibold">Acasă &amp; Descriere Personală</span>
+            </div>
+
+            <div class="flex flex-col-reverse md:flex-row items-center md:items-start gap-10 md:gap-12">
                 
                 <!-- Coloana Text & Bio -->
                 <div class="flex-1 text-center md:text-left">
@@ -133,7 +162,7 @@
                     </h1>
                     
                     <p class="text-lg sm:text-xl font-medium text-primary-600 dark:text-primary-400 mb-6 font-serif">
-                        Cercetător Senior în Inteligență Artificială &amp; Arhitect Software
+                        Cercetător Senior în Inteligență Artificială &amp; Sisteme Distribuite
                     </p>
 
                     <div class="space-y-4 text-slate-600 dark:text-slate-300 text-base leading-relaxed max-w-2xl mx-auto md:mx-0">
@@ -152,13 +181,8 @@
                             <span>andrei.ionescu@cercetare-ai.ro</span>
                         </button>
 
-                        <a href="#publicatii" class="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-medium text-sm shadow-sm transition-all">
-                            <i data-lucide="book-open" class="w-4 h-4 text-primary-600 dark:text-primary-400"></i>
-                            <span>Vezi Publicațiile</span>
-                        </a>
-
                         <!-- Pictograme rețele academice și profesionale -->
-                        <div class="flex items-center space-x-2 sm:ml-2 mt-2 sm:mt-0">
+                        <div class="flex items-center space-x-2">
                             <a href="https://github.com" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub" class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 hover:border-primary-300 transition-all">
                                 <i data-lucide="github" class="w-5 h-5"></i>
                             </a>
@@ -175,11 +199,10 @@
                     </div>
                 </div>
 
-                <!-- Coloana Fotografie Profil / Avatar SVG stilizat -->
+                <!-- Coloana Fotografie Profil -->
                 <div class="w-44 h-44 sm:w-56 sm:h-56 shrink-0 relative">
                     <div class="absolute inset-0 rounded-3xl bg-gradient-to-tr from-primary-600 to-teal-400 rotate-3 opacity-20 dark:opacity-30"></div>
                     <div class="relative w-full h-full rounded-3xl overflow-hidden border-2 border-white dark:border-slate-800 shadow-xl bg-slate-200 dark:bg-slate-800 flex items-center justify-center">
-                        <!-- Portret vectorial stilizat cu fallback garantat -->
                         <img 
                             src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=500&q=80" 
                             alt="Portret Dr. Andrei Ionescu" 
@@ -187,7 +210,6 @@
                             onerror="this.onerror=null; this.src='https://placehold.co/400x400/0d9488/ffffff?text=Dr.+A.+Ionescu';"
                         >
                     </div>
-                    <!-- Insignă afiliere -->
                     <div class="mt-4 text-center">
                         <span class="inline-flex items-center space-x-1.5 text-xs font-medium text-slate-500 dark:text-slate-400">
                             <i data-lucide="map-pin" class="w-3.5 h-3.5 text-primary-600"></i>
@@ -195,21 +217,20 @@
                         </span>
                     </div>
                 </div>
-
             </div>
 
             <!-- Indicatori Cheie (Metrici Academice) -->
             <div class="mt-14 grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <div class="bg-white dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 text-center shadow-sm">
-                    <div class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">28+</div>
+                    <div class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">28</div>
                     <div class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Lucrări Publicate</div>
                 </div>
                 <div class="bg-white dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 text-center shadow-sm">
-                    <div class="text-2xl sm:text-3xl font-bold text-primary-600 dark:text-primary-400">1,420</div>
+                    <div class="text-2xl sm:text-3xl font-bold text-primary-600 dark:text-primary-400">1.420</div>
                     <div class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Citări Academice</div>
                 </div>
                 <div class="bg-white dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 text-center shadow-sm">
-                    <div class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">16</div>
+                    <div class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">18</div>
                     <div class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Indice h-index</div>
                 </div>
                 <div class="bg-white dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 text-center shadow-sm">
@@ -217,76 +238,183 @@
                     <div class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Proiecte Open-Source</div>
                 </div>
             </div>
-        </section>
 
-        <hr class="max-w-5xl mx-auto border-slate-200 dark:border-slate-800/80">
-
-        <!-- 2. Secțiunea Interese (Profesionale și Personale) -->
-        <section id="interese" class="scroll-mt-24 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
-            <div class="mb-10">
-                <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
-                    Domenii de Interes
-                </h2>
-                <p class="mt-2 text-slate-600 dark:text-slate-400 text-base">
-                    Direcțiile mele principale de cercetare științifică, completate de pasiunile care îmi mențin echilibrul și creativitatea în afara laboratorului.
-                </p>
-            </div>
-
-            <!-- Sub-secțiune: Interese Profesionale -->
-            <div class="mb-10">
-                <h3 class="text-sm font-semibold uppercase tracking-wider text-primary-600 dark:text-primary-400 mb-4 flex items-center space-x-2">
-                    <i data-lucide="cpu" class="w-4 h-4"></i>
-                    <span>Cercetare &amp; Tehnologie</span>
-                </h3>
-                
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <!-- Card 1 -->
-                    <div class="card-hover bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
-                        <div class="w-11 h-11 rounded-xl bg-primary-50 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400 flex items-center justify-center mb-4">
-                            <i data-lucide="brain-circuit" class="w-6 h-6"></i>
+            <!-- Parcurs Academic & Experiență pe scurt -->
+            <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Experiență -->
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+                    <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center space-x-2 mb-5">
+                        <i data-lucide="briefcase" class="w-4 h-4 text-primary-600 dark:text-primary-400"></i>
+                        <span>Experiență Academică &amp; Cercetare</span>
+                    </h2>
+                    <div class="space-y-4 border-l-2 border-slate-200 dark:border-slate-800 pl-4 ml-1.5">
+                        <div>
+                            <div class="text-xs font-semibold text-primary-600 dark:text-primary-400">2022 — Prezent</div>
+                            <div class="text-sm font-bold text-slate-900 dark:text-white">Cercetător Științific Gradul I (CS I)</div>
+                            <div class="text-xs text-slate-500 dark:text-slate-400">Institutul de Cercetări Avansate în Inteligență Artificială, București</div>
                         </div>
-                        <h4 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">
-                            Învățare Automată Explicabilă (XAI)
-                        </h4>
-                        <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                            Dezvoltarea metodelor matematice care permit interpretarea deciziilor rețelelor neurale profunde, esențiale în diagnosticul medical asistat și sistemele autonome critice.
-                        </p>
+                        <div>
+                            <div class="text-xs font-semibold text-slate-400">2019 — 2022</div>
+                            <div class="text-sm font-bold text-slate-900 dark:text-white">Cercetător Postdoctoral (Postdoc)</div>
+                            <div class="text-xs text-slate-500 dark:text-slate-400">ETH Zürich — Departamentul de Informatică (Sisteme Distribuite)</div>
+                        </div>
                     </div>
+                </div>
 
-                    <!-- Card 2 -->
-                    <div class="card-hover bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
-                        <div class="w-11 h-11 rounded-xl bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-4">
-                            <i data-lucide="network" class="w-6 h-6"></i>
+                <!-- Educație -->
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+                    <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center space-x-2 mb-5">
+                        <i data-lucide="award" class="w-4 h-4 text-primary-600 dark:text-primary-400"></i>
+                        <span>Formare &amp; Educație</span>
+                    </h2>
+                    <div class="space-y-4 border-l-2 border-slate-200 dark:border-slate-800 pl-4 ml-1.5">
+                        <div>
+                            <div class="text-xs font-semibold text-primary-600 dark:text-primary-400">2015 — 2019</div>
+                            <div class="text-sm font-bold text-slate-900 dark:text-white">Doctorat (PhD) în Informatică — Summa Cum Laude</div>
+                            <div class="text-xs text-slate-500 dark:text-slate-400">Universitatea Politehnica din București (Teză: Optimizarea Rețelelor Neurale Grafice)</div>
                         </div>
-                        <h4 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">
-                            Sisteme Distribuite &amp; Federated Learning
-                        </h4>
-                        <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                            Antrenarea colaborativă a modelelor AI pe dispozitive descentralizate fără transferul datelor brute, garantând confidențialitatea și reducând latența rețelei.
-                        </p>
-                    </div>
-
-                    <!-- Card 3 -->
-                    <div class="card-hover bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
-                        <div class="w-11 h-11 rounded-xl bg-amber-50 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-4">
-                            <i data-lucide="languages" class="w-6 h-6"></i>
+                        <div>
+                            <div class="text-xs font-semibold text-slate-400">2013 — 2015</div>
+                            <div class="text-sm font-bold text-slate-900 dark:text-white">Master în Inteligență Artificială și Sisteme Distribuite</div>
+                            <div class="text-xs text-slate-500 dark:text-slate-400">Universitatea din București — Facultatea de Matematică și Informatică</div>
                         </div>
-                        <h4 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">
-                            NLP pentru Limbi cu Resurse Reduse
-                        </h4>
-                        <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                            Optimizarea arhitecturilor de tip Transformer și crearea de corpusuri lingvistice curate pentru îmbunătățirea performanței modelelor de limbaj în limba română.
-                        </p>
                     </div>
                 </div>
             </div>
 
-            <!-- Sub-secțiune: Interese Personale -->
+            <!-- Carduri de navigare rapidă către celelalte pagini -->
+            <div class="mt-12 pt-8 border-t border-slate-200 dark:border-slate-800">
+                <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-4">
+                    Explorează celelalte secțiuni ale portofoliului
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <a href="#interese" data-route="interese" class="nav-link group card-hover bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-primary-400 dark:hover:border-primary-600 rounded-2xl p-6 shadow-sm flex items-center justify-between">
+                        <div>
+                            <div class="text-xs font-semibold text-primary-600 dark:text-primary-400 mb-1">Pagina 2</div>
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                                Domenii de Interes &amp; Pasiuni
+                            </h3>
+                            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                                Direcții de cercetare în XAI, sisteme reziliente, NLP și activități extraprofesionale.
+                            </p>
+                        </div>
+                        <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 group-hover:bg-primary-600 group-hover:text-white flex items-center justify-center shrink-0 ml-4 transition-colors">
+                            <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                        </div>
+                    </a>
+
+                    <a href="#publicatii" data-route="publicatii" class="nav-link group card-hover bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-primary-400 dark:hover:border-primary-600 rounded-2xl p-6 shadow-sm flex items-center justify-between">
+                        <div>
+                            <div class="text-xs font-semibold text-primary-600 dark:text-primary-400 mb-1">Pagina 3</div>
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                                Publicații Științifice
+                            </h3>
+                            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                                Articole evaluate colegial (2023–2026), rezumate detaliate, filtre și citări BibTeX.
+                            </p>
+                        </div>
+                        <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 group-hover:bg-primary-600 group-hover:text-white flex items-center justify-center shrink-0 ml-4 transition-colors">
+                            <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- =================================================================== -->
+        <!-- PAGINA 2: INTERESE (#interese)                                      -->
+        <!-- =================================================================== -->
+        <section id="page-interese" class="page-view max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-10 md:pt-10">
+            
+            <!-- Indicator pagină curentă (Breadcrumb) -->
+            <div class="mb-6 flex items-center space-x-2 text-xs font-medium text-slate-500 dark:text-slate-400">
+                <a href="#acasa" data-route="acasa" class="nav-link hover:text-primary-600 dark:hover:text-primary-400">Acasă</a>
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                <span class="text-primary-600 dark:text-primary-400 font-semibold">Interese</span>
+            </div>
+
+            <div class="mb-10">
+                <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">
+                    Domenii de Interes
+                </h1>
+                <p class="mt-3 text-slate-600 dark:text-slate-400 text-base max-w-3xl leading-relaxed">
+                    Direcțiile mele principale de cercetare științifică și inginerie software, completate de pasiunile care îmi mențin echilibrul, curiozitatea și creativitatea în afara laboratorului.
+                </p>
+            </div>
+
+            <!-- Sub-secțiune: Domenii de Cercetare -->
+            <div class="mb-12">
+                <h2 class="text-sm font-semibold uppercase tracking-wider text-primary-600 dark:text-primary-400 mb-5 flex items-center space-x-2">
+                    <i data-lucide="cpu" class="w-4 h-4"></i>
+                    <span>Domenii de Cercetare &amp; Tehnologie</span>
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Card 1 -->
+                    <div class="card-hover bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="w-11 h-11 rounded-xl bg-primary-50 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400 flex items-center justify-center mb-4">
+                                <i data-lucide="brain-circuit" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">
+                                Învățare Automată Explicabilă (XAI)
+                            </h3>
+                            <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                                Dezvoltarea metodelor matematice și a grafurilor cauzale care permit interpretarea riguroasă a deciziilor rețelelor neurale profunde, esențiale în diagnosticul medical asistat și sistemele autonome critice.
+                            </p>
+                        </div>
+                        <div class="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-wrap gap-1.5">
+                            <span class="px-2 py-0.5 text-[11px] font-medium rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Atribuire Cauzală</span>
+                            <span class="px-2 py-0.5 text-[11px] font-medium rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Calibrare</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="card-hover bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="w-11 h-11 rounded-xl bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-4">
+                                <i data-lucide="network" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">
+                                Sisteme Distribuite Reziliente
+                            </h3>
+                            <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                                Arhitecturi de învățare federată asincronă și protocoale tolerante la defecte pentru antrenarea colaborativă a modelelor AI pe noduri descentralizate, cu garanții de confidențialitate diferențială.
+                            </p>
+                        </div>
+                        <div class="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-wrap gap-1.5">
+                            <span class="px-2 py-0.5 text-[11px] font-medium rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Federated Learning</span>
+                            <span class="px-2 py-0.5 text-[11px] font-medium rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Privacy-Preserving</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="card-hover bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="w-11 h-11 rounded-xl bg-amber-50 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-4">
+                                <i data-lucide="languages" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">
+                                Procesarea Limbajului Natural (NLP) pentru Limba Română
+                            </h3>
+                            <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                                Optimizarea arhitecturilor Transformer și construirea de seturi de referință deschise pentru raționament clinic, juridic și științific adaptate specificului morfologic al limbii române.
+                            </p>
+                        </div>
+                        <div class="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-wrap gap-1.5">
+                            <span class="px-2 py-0.5 text-[11px] font-medium rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">LLM Adaptation</span>
+                            <span class="px-2 py-0.5 text-[11px] font-medium rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Corpusuri Ro</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sub-secțiune: Pasiuni & Activități Extraprofesionale -->
             <div>
-                <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-4 flex items-center space-x-2">
+                <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-5 flex items-center space-x-2">
                     <i data-lucide="compass" class="w-4 h-4"></i>
-                    <span>Pasiuni &amp; Timp Liber</span>
-                </h3>
+                    <span>Pasiuni &amp; Activități Extraprofesionale</span>
+                </h2>
                 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <!-- Card 4 -->
@@ -294,11 +422,11 @@
                         <div class="w-11 h-11 rounded-xl bg-emerald-50 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-4">
                             <i data-lucide="mountain" class="w-6 h-6"></i>
                         </div>
-                        <h4 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">
-                            Alpinism și Drumeții Montane
-                        </h4>
+                        <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">
+                            Alpinism &amp; Drumeții Montane
+                        </h3>
                         <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                            Explorarea crestelor Carpaților Meridionali în toate anotimpurile. Muntele oferă disciplina, reziliența și perspectiva necesare pentru a aborda probleme complexe.
+                            Parcurgerea crestelor din Munții Făgăraș, Retezat și Piatra Craiului în toate anotimpurile. Muntele cultivă disciplina, reziliența și claritatea mentală necesare în cercetarea pe termen lung.
                         </p>
                     </div>
 
@@ -307,11 +435,11 @@
                         <div class="w-11 h-11 rounded-xl bg-sky-50 dark:bg-sky-900/40 text-sky-600 dark:text-sky-400 flex items-center justify-center mb-4">
                             <i data-lucide="camera" class="w-6 h-6"></i>
                         </div>
-                        <h4 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">
-                            Fotografie de Peisaj și Astrofotografie
-                        </h4>
+                        <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">
+                            Fotografie Analogică
+                        </h3>
                         <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                            Capturarea luminii naturale la răsărit și a cerului nocturn departe de poluarea luminoasă, combinând sensibilitatea vizuală cu procesarea digitală a imaginii.
+                            Fotografierea pe film de 35mm și format mediu, inclusiv developarea manuală alb-negru. Limitarea la 36 de cadre încurajează răbdarea, compoziția atentă și observația detaliilor.
                         </p>
                     </div>
 
@@ -320,53 +448,117 @@
                         <div class="w-11 h-11 rounded-xl bg-purple-50 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 flex items-center justify-center mb-4">
                             <i data-lucide="book-marked" class="w-6 h-6"></i>
                         </div>
-                        <h4 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">
-                            Literatură Științifico-Fantastică Clasică
-                        </h4>
+                        <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">
+                            Literatură Science-Fiction &amp; Șah
+                        </h3>
                         <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                            Lectura autorilor precum Isaac Asimov, Stanisław Lem și Ursula K. Le Guin — o sursă constantă de reflecție asupra impactului tehnologiei asupra societății umane.
+                            Lectura autorilor clasici (Stanisław Lem, Isaac Asimov, Ursula K. Le Guin) și partidele de șah rapid — un exercițiu permanent de gândire strategică și anticipare.
                         </p>
                     </div>
                 </div>
             </div>
+
+            <!-- Navigarea între pagini (Înapoi / Înainte) -->
+            <div class="mt-14 pt-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-4">
+                <a href="#acasa" data-route="acasa" class="nav-link inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-primary-400 text-sm font-semibold text-slate-700 dark:text-slate-200 transition-all">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                    <span>Înapoi la Acasă</span>
+                </a>
+                <a href="#publicatii" data-route="publicatii" class="nav-link inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold shadow-sm transition-all">
+                    <span>Mergi la Publicații</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
+            </div>
         </section>
 
-        <hr class="max-w-5xl mx-auto border-slate-200 dark:border-slate-800/80">
+        <!-- =================================================================== -->
+        <!-- PAGINA 3: PUBLICAȚII ȘTIINȚIFICE (#publicatii)                      -->
+        <!-- =================================================================== -->
+        <section id="page-publicatii" class="page-view max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-10 md:pt-10">
+            
+            <!-- Indicator pagină curentă (Breadcrumb) -->
+            <div class="mb-6 flex items-center space-x-2 text-xs font-medium text-slate-500 dark:text-slate-400">
+                <a href="#acasa" data-route="acasa" class="nav-link hover:text-primary-600 dark:hover:text-primary-400">Acasă</a>
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                <span class="text-primary-600 dark:text-primary-400 font-semibold">Publicații</span>
+            </div>
 
-        <!-- 3. Secțiunea Publicații Științifice -->
-        <section id="publicatii" class="scroll-mt-24 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
-            <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
-                <div>
-                    <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
-                        Publicații Selectate
-                    </h2>
-                    <p class="mt-2 text-slate-600 dark:text-slate-400 text-base">
-                        Articole științifice evaluate colegial (peer-reviewed) publicate în jurnale internaționale și conferințe de profil.
-                    </p>
+            <div class="mb-8">
+                <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">
+                    Publicații Științifice
+                </h1>
+                <p class="mt-3 text-slate-600 dark:text-slate-400 text-base max-w-3xl">
+                    Selecție de articole evaluate colegial (peer-reviewed) publicate în jurnale internaționale și conferințe de top (2023–2026). Folosește căutarea sau filtrele pentru a explora lucrările.
+                </p>
+            </div>
+
+            <!-- Bară de căutare și filtre avansate -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-5 mb-8 shadow-sm space-y-4">
+                <div class="flex flex-col md:flex-row gap-4">
+                    <!-- Căutare după titlu / cuvinte cheie -->
+                    <div class="relative flex-1">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                        <input 
+                            type="text" 
+                            id="pub-search" 
+                            placeholder="Caută după titlu, autori sau cuvinte cheie (ex. cauzală, federată, RoMedBench)..." 
+                            class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-sm text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500 transition-all"
+                        >
+                    </div>
+
+                    <!-- Filtru după Tip Publicație -->
+                    <div class="flex items-center space-x-2 shrink-0">
+                        <label for="type-filter" class="text-xs font-semibold text-slate-500 dark:text-slate-400">Tip:</label>
+                        <select id="type-filter" class="px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-sm font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500 cursor-pointer">
+                            <option value="all">Toate tipurile</option>
+                            <option value="Conferință">Conferință</option>
+                            <option value="Jurnal">Jurnal</option>
+                        </select>
+                    </div>
                 </div>
 
-                <!-- Filtru rapid pe ani -->
-                <div class="flex items-center space-x-2" id="year-filters">
-                    <button data-year="all" class="filter-btn active px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-primary-600 text-white transition-all cursor-pointer">
-                        Toate (5)
-                    </button>
-                    <button data-year="2026" class="filter-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-primary-400 transition-all cursor-pointer">
-                        2026
-                    </button>
-                    <button data-year="2025" class="filter-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-primary-400 transition-all cursor-pointer">
-                        2025
-                    </button>
-                    <button data-year="2024" class="filter-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-primary-400 transition-all cursor-pointer">
-                        2024
-                    </button>
+                <!-- Filtru pe ani + Contor rezultate -->
+                <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+                    <div class="flex flex-wrap items-center gap-2" id="year-filters">
+                        <span class="text-xs font-semibold text-slate-500 dark:text-slate-400 mr-1">An:</span>
+                        <button data-year="all" class="filter-btn active px-3 py-1.5 rounded-xl text-xs font-semibold bg-primary-600 text-white transition-all cursor-pointer">
+                            Toți
+                        </button>
+                        <button data-year="2026" class="filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-primary-400 transition-all cursor-pointer">
+                            2026
+                        </button>
+                        <button data-year="2025" class="filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-primary-400 transition-all cursor-pointer">
+                            2025
+                        </button>
+                        <button data-year="2024" class="filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-primary-400 transition-all cursor-pointer">
+                            2024
+                        </button>
+                        <button data-year="2023" class="filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-primary-400 transition-all cursor-pointer">
+                            2023
+                        </button>
+                    </div>
+
+                    <div id="pub-count" class="text-xs font-medium text-slate-500 dark:text-slate-400">
+                        Se afișează 6 publicații
+                    </div>
                 </div>
+            </div>
+
+            <!-- Mesaj când nu există rezultate -->
+            <div id="no-pubs-msg" class="hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-10 text-center">
+                <i data-lucide="search-x" class="w-10 h-10 text-slate-400 mx-auto mb-3"></i>
+                <h3 class="text-base font-bold text-slate-900 dark:text-white">Nicio publicație găsită</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Încearcă să modifici termenii de căutare sau să resetezi filtrele active.</p>
+                <button onclick="resetPublicationFilters()" class="mt-4 px-4 py-2 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-xs font-semibold cursor-pointer">
+                    Resetează filtrele
+                </button>
             </div>
 
             <!-- Lista cronologică de publicații -->
             <div class="space-y-6" id="publications-list">
                 
                 <!-- Publicația 1 (2026) -->
-                <article data-year="2026" class="publication-item bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm hover:border-primary-300 dark:hover:border-primary-700 transition-all">
+                <article data-year="2026" data-type="Conferință" class="publication-item bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm hover:border-primary-300 dark:hover:border-primary-700 transition-all">
                     <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-primary-50 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300">
                             2026 • Conferință (NeurIPS)
@@ -374,9 +566,9 @@
                         <span class="text-xs font-mono text-slate-400">DOI: 10.5555/neurips.2026.0842</span>
                     </div>
 
-                    <h3 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white leading-snug mb-2">
+                    <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white leading-snug mb-2">
                         Atribuire Cauzală în Rețele Neurale Grafice pentru Predicția Fenomenelor Meteorologice Extreme
-                    </h3>
+                    </h2>
 
                     <p class="text-sm text-slate-600 dark:text-slate-300 mb-3">
                         <strong class="font-semibold text-slate-900 dark:text-white">Andrei Ionescu</strong>, Elena M. Popescu, Radu V. Dumitrescu
@@ -386,22 +578,20 @@
                         Advances in Neural Information Processing Systems (NeurIPS 2026), Vol. 39, pp. 1124–1139.
                     </p>
 
-                    <!-- Rezumat (Abstract) pliabil -->
                     <div class="abstract-box hidden mb-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700/70 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
                         <strong class="text-slate-800 dark:text-slate-200 block mb-1">Rezumat (Abstract):</strong>
                         Acest studiu propune un cadru formal bazat pe grafuri cauzale pentru explicarea predicțiilor pe termen scurt ale precipitațiilor extreme în bazinul Dunării. Metoda noastră reduce eroarea de calibrare cu 18% față de modelele standard și oferă meteorologilor hărți de atribuire verificabile fizic.
                     </div>
 
-                    <!-- Acțiuni publicație -->
                     <div class="flex flex-wrap items-center gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
                         <button onclick="toggleAbstract(this)" class="inline-flex items-center space-x-1.5 text-xs font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-700 cursor-pointer py-1 px-2 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/30 transition-colors">
                             <i data-lucide="file-text" class="w-4 h-4"></i>
                             <span>Afișează Rezumatul</span>
                         </button>
-                        <a href="#publicatii" onclick="showToast('Se descarcă PDF-ul simulat: Ionescu_NeurIPS_2026.pdf')" class="inline-flex items-center space-x-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white py-1 px-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                        <button onclick="showToast('Se descarcă PDF-ul simulat: Ionescu_NeurIPS_2026.pdf')" class="inline-flex items-center space-x-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white py-1 px-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
                             <i data-lucide="download" class="w-4 h-4"></i>
                             <span>PDF</span>
-                        </a>
+                        </button>
                         <button onclick="copyBibtex('ionescu2026causal')" class="inline-flex items-center space-x-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white py-1 px-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
                             <i data-lucide="quote" class="w-4 h-4"></i>
                             <span>Copiază BibTeX</span>
@@ -410,7 +600,7 @@
                 </article>
 
                 <!-- Publicația 2 (2025) -->
-                <article data-year="2025" class="publication-item bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm hover:border-primary-300 dark:hover:border-primary-700 transition-all">
+                <article data-year="2025" data-type="Jurnal" class="publication-item bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm hover:border-primary-300 dark:hover:border-primary-700 transition-all">
                     <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300">
                             2025 • Jurnal (IEEE TPAMI)
@@ -418,9 +608,9 @@
                         <span class="text-xs font-mono text-slate-400">DOI: 10.1109/TPAMI.2025.339104</span>
                     </div>
 
-                    <h3 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white leading-snug mb-2">
+                    <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white leading-snug mb-2">
                         Optimizarea Agregării Asincrone în Învățarea Federată cu Confidențialitate Diferențială
-                    </h3>
+                    </h2>
 
                     <p class="text-sm text-slate-600 dark:text-slate-300 mb-3">
                         Mihai Stanciu, <strong class="font-semibold text-slate-900 dark:text-white">Andrei Ionescu</strong>, Cristina Georgescu
@@ -440,10 +630,10 @@
                             <i data-lucide="file-text" class="w-4 h-4"></i>
                             <span>Afișează Rezumatul</span>
                         </button>
-                        <a href="#publicatii" onclick="showToast('Se descarcă PDF-ul simulat: Stanciu_Ionescu_TPAMI_2025.pdf')" class="inline-flex items-center space-x-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white py-1 px-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                        <button onclick="showToast('Se descarcă PDF-ul simulat: Stanciu_Ionescu_TPAMI_2025.pdf')" class="inline-flex items-center space-x-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white py-1 px-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
                             <i data-lucide="download" class="w-4 h-4"></i>
                             <span>PDF</span>
-                        </a>
+                        </button>
                         <button onclick="copyBibtex('stanciu2025federated')" class="inline-flex items-center space-x-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white py-1 px-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
                             <i data-lucide="quote" class="w-4 h-4"></i>
                             <span>Copiază BibTeX</span>
@@ -452,7 +642,7 @@
                 </article>
 
                 <!-- Publicația 3 (2025) -->
-                <article data-year="2025" class="publication-item bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm hover:border-primary-300 dark:hover:border-primary-700 transition-all">
+                <article data-year="2025" data-type="Conferință" class="publication-item bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm hover:border-primary-300 dark:hover:border-primary-700 transition-all">
                     <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-primary-50 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300">
                             2025 • Conferință (ACL)
@@ -460,9 +650,9 @@
                         <span class="text-xs font-mono text-slate-400">DOI: 10.18653/v1/2025.acl-long.312</span>
                     </div>
 
-                    <h3 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white leading-snug mb-2">
+                    <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white leading-snug mb-2">
                         RoMedBench: Un Set de Referință pentru Evaluarea Raționamentului Clinic în Limba Română
-                    </h3>
+                    </h2>
 
                     <p class="text-sm text-slate-600 dark:text-slate-300 mb-3">
                         <strong class="font-semibold text-slate-900 dark:text-white">Andrei Ionescu</strong>, Ioana Vasilescu, Dr. Vlad Marin
@@ -482,10 +672,10 @@
                             <i data-lucide="file-text" class="w-4 h-4"></i>
                             <span>Afișează Rezumatul</span>
                         </button>
-                        <a href="#publicatii" onclick="showToast('Se descarcă PDF-ul simulat: Ionescu_ACL_2025_RoMedBench.pdf')" class="inline-flex items-center space-x-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white py-1 px-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                        <button onclick="showToast('Se descarcă PDF-ul simulat: Ionescu_ACL_2025_RoMedBench.pdf')" class="inline-flex items-center space-x-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white py-1 px-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
                             <i data-lucide="download" class="w-4 h-4"></i>
                             <span>PDF</span>
-                        </a>
+                        </button>
                         <button onclick="copyBibtex('ionescu2025romedbench')" class="inline-flex items-center space-x-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white py-1 px-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
                             <i data-lucide="quote" class="w-4 h-4"></i>
                             <span>Copiază BibTeX</span>
@@ -494,7 +684,7 @@
                 </article>
 
                 <!-- Publicația 4 (2024) -->
-                <article data-year="2024" class="publication-item bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm hover:border-primary-300 dark:hover:border-primary-700 transition-all">
+                <article data-year="2024" data-type="Jurnal" class="publication-item bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm hover:border-primary-300 dark:hover:border-primary-700 transition-all">
                     <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300">
                             2024 • Jurnal (Journal of Machine Learning Research)
@@ -502,9 +692,9 @@
                         <span class="text-xs font-mono text-slate-400">DOI: 10.5555/jmlr.2024.25.118</span>
                     </div>
 
-                    <h3 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white leading-snug mb-2">
+                    <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white leading-snug mb-2">
                         Compresia Structurată a Modelelor Transformer prin Distilare Spectrală
-                    </h3>
+                    </h2>
 
                     <p class="text-sm text-slate-600 dark:text-slate-300 mb-3">
                         <strong class="font-semibold text-slate-900 dark:text-white">Andrei Ionescu</strong>, Stefan K. Lindqvist
@@ -524,10 +714,10 @@
                             <i data-lucide="file-text" class="w-4 h-4"></i>
                             <span>Afișează Rezumatul</span>
                         </button>
-                        <a href="#publicatii" onclick="showToast('Se descarcă PDF-ul simulat: Ionescu_Lindqvist_JMLR_2024.pdf')" class="inline-flex items-center space-x-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white py-1 px-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                        <button onclick="showToast('Se descarcă PDF-ul simulat: Ionescu_Lindqvist_JMLR_2024.pdf')" class="inline-flex items-center space-x-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white py-1 px-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
                             <i data-lucide="download" class="w-4 h-4"></i>
                             <span>PDF</span>
-                        </a>
+                        </button>
                         <button onclick="copyBibtex('ionescu2024spectral')" class="inline-flex items-center space-x-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white py-1 px-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
                             <i data-lucide="quote" class="w-4 h-4"></i>
                             <span>Copiază BibTeX</span>
@@ -536,7 +726,7 @@
                 </article>
 
                 <!-- Publicația 5 (2024) -->
-                <article data-year="2024" class="publication-item bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm hover:border-primary-300 dark:hover:border-primary-700 transition-all">
+                <article data-year="2024" data-type="Conferință" class="publication-item bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm hover:border-primary-300 dark:hover:border-primary-700 transition-all">
                     <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-primary-50 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300">
                             2024 • Conferință (ICML)
@@ -544,9 +734,9 @@
                         <span class="text-xs font-mono text-slate-400">DOI: 10.5555/icml.2024.1904</span>
                     </div>
 
-                    <h3 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white leading-snug mb-2">
+                    <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white leading-snug mb-2">
                         Detecția Anomaliilor în Serii Temporale Multi-Senzor Fără Supraveghere
-                    </h3>
+                    </h2>
 
                     <p class="text-sm text-slate-600 dark:text-slate-300 mb-3">
                         Laura Munteanu, <strong class="font-semibold text-slate-900 dark:text-white">Andrei Ionescu</strong>, Bogdan Toader
@@ -566,10 +756,10 @@
                             <i data-lucide="file-text" class="w-4 h-4"></i>
                             <span>Afișează Rezumatul</span>
                         </button>
-                        <a href="#publicatii" onclick="showToast('Se descarcă PDF-ul simulat: Munteanu_Ionescu_ICML_2024.pdf')" class="inline-flex items-center space-x-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white py-1 px-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                        <button onclick="showToast('Se descarcă PDF-ul simulat: Munteanu_Ionescu_ICML_2024.pdf')" class="inline-flex items-center space-x-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white py-1 px-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
                             <i data-lucide="download" class="w-4 h-4"></i>
                             <span>PDF</span>
-                        </a>
+                        </button>
                         <button onclick="copyBibtex('munteanu2024anomaly')" class="inline-flex items-center space-x-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white py-1 px-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
                             <i data-lucide="quote" class="w-4 h-4"></i>
                             <span>Copiază BibTeX</span>
@@ -577,33 +767,67 @@
                     </div>
                 </article>
 
-            </div>
-        </section>
+                <!-- Publicația 6 (2023) -->
+                <article data-year="2023" data-type="Jurnal" class="publication-item bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm hover:border-primary-300 dark:hover:border-primary-700 transition-all">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300">
+                            2023 • Jurnal (ACM Computing Surveys)
+                        </span>
+                        <span class="text-xs font-mono text-slate-400">DOI: 10.1145/3589124</span>
+                    </div>
 
-        <!-- Secțiune Contact / Invitație la dialog -->
-        <section id="contact" class="scroll-mt-24 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
-            <div class="bg-gradient-to-br from-slate-900 to-slate-800 dark:from-slate-900 dark:to-slate-850 border border-slate-800 rounded-3xl p-8 sm:p-10 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-8">
-                <div class="max-w-xl text-center md:text-left">
-                    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mb-3">
-                        Interesat de o colaborare sau o discuție?
+                    <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white leading-snug mb-2">
+                        O Analiză Sistematică a Protocoalelor de Consens Tolerante la Defecte Bizantine în Rețele Edge
                     </h2>
-                    <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
-                        Fie că este vorba despre proiecte de cercetare interdisciplinare, recenzii științifice, conferințe sau consultanță în arhitecturi AI, îmi face plăcere să primesc mesaje.
+
+                    <p class="text-sm text-slate-600 dark:text-slate-300 mb-3">
+                        <strong class="font-semibold text-slate-900 dark:text-white">Andrei Ionescu</strong>, Lukas Weber, Ana-Maria Stoica
                     </p>
-                </div>
-                <div class="flex flex-col sm:flex-row gap-3 shrink-0">
-                    <button onclick="copyEmail()" class="inline-flex items-center justify-center space-x-2 px-6 py-3.5 rounded-xl bg-primary-500 hover:bg-primary-400 text-slate-950 font-semibold text-sm shadow-md transition-all cursor-pointer">
-                        <i data-lucide="copy" class="w-4 h-4"></i>
-                        <span>Copiază Adresa de Email</span>
-                    </button>
-                </div>
+
+                    <p class="text-sm italic font-serif text-slate-500 dark:text-slate-400 mb-4">
+                        ACM Computing Surveys (CSUR), Vol. 55, Nr. 12, Articol 248, pp. 1–38.
+                    </p>
+
+                    <div class="abstract-box hidden mb-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700/70 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                        <strong class="text-slate-800 dark:text-slate-200 block mb-1">Rezumat (Abstract):</strong>
+                        Evaluăm comparativ 22 de algoritmi de consens distribuit din perspectiva complexității comunicaționale, consumului energetic și rezilienței la partiționarea rețelei în infrastructuri IoT și Edge Computing.
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+                        <button onclick="toggleAbstract(this)" class="inline-flex items-center space-x-1.5 text-xs font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-700 cursor-pointer py-1 px-2 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/30 transition-colors">
+                            <i data-lucide="file-text" class="w-4 h-4"></i>
+                            <span>Afișează Rezumatul</span>
+                        </button>
+                        <button onclick="showToast('Se descarcă PDF-ul simulat: Ionescu_CSUR_2023.pdf')" class="inline-flex items-center space-x-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white py-1 px-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+                            <i data-lucide="download" class="w-4 h-4"></i>
+                            <span>PDF</span>
+                        </button>
+                        <button onclick="copyBibtex('ionescu2023byzantine')" class="inline-flex items-center space-x-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white py-1 px-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+                            <i data-lucide="quote" class="w-4 h-4"></i>
+                            <span>Copiază BibTeX</span>
+                        </button>
+                    </div>
+                </article>
+
+            </div>
+
+            <!-- Navigarea între pagini (Înapoi la Interese / Acasă) -->
+            <div class="mt-14 pt-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-4">
+                <a href="#interese" data-route="interese" class="nav-link inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-primary-400 text-sm font-semibold text-slate-700 dark:text-slate-200 transition-all">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                    <span>Înapoi la Interese</span>
+                </a>
+                <a href="#acasa" data-route="acasa" class="nav-link inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-primary-400 text-sm font-semibold text-slate-700 dark:text-slate-200 transition-all">
+                    <i data-lucide="home" class="w-4 h-4"></i>
+                    <span>Înapoi la Acasă</span>
+                </a>
             </div>
         </section>
 
     </main>
 
-    <!-- 4. Subsol (Footer) -->
-    <footer class="border-t border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950 py-10">
+    <!-- 4. Subsol persistent (Footer) -->
+    <footer class="border-t border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950 py-8 mt-auto">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-slate-500 dark:text-slate-400">
             <div class="flex items-center space-x-2">
                 <span class="font-semibold text-slate-700 dark:text-slate-300">Dr. Andrei Ionescu</span>
@@ -612,9 +836,9 @@
             </div>
             
             <div class="flex items-center space-x-6">
-                <a href="#acasa" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Sus ↑</a>
-                <a href="#interese" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Interese</a>
-                <a href="#publicatii" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Publicații</a>
+                <a href="#acasa" data-route="acasa" class="nav-link hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Acasă</a>
+                <a href="#interese" data-route="interese" class="nav-link hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Interese</a>
+                <a href="#publicatii" data-route="publicatii" class="nav-link hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Publicații</a>
             </div>
         </div>
     </footer>
@@ -627,16 +851,97 @@
         </div>
     </div>
 
-    <!-- Scripturi JavaScript pentru interactivitate -->
+    <!-- Scripturi JavaScript pentru rutare multi-pagină și interactivitate -->
     <script>
         // Inițializare pictograme Lucide
         lucide.createIcons();
 
-        // 1. Gestionare Temă (Light / Dark Mode)
+        // 1. Sistem de Rutare Multi-Pagină (SPA bazat pe Hash URL: #acasa, #interese, #publicatii)
+        const validRoutes = ['acasa', 'interese', 'publicatii'];
+        const pageViews = {
+            acasa: document.getElementById('page-acasa'),
+            interese: document.getElementById('page-interese'),
+            publicatii: document.getElementById('page-publicatii')
+        };
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        const pageTitles = {
+            acasa: 'Acasă — Dr. Andrei Ionescu',
+            interese: 'Interese & Cercetare — Dr. Andrei Ionescu',
+            publicatii: 'Publicații Științifice — Dr. Andrei Ionescu'
+        };
+
+        function navigateTo(route, updateHash = true) {
+            if (!validRoutes.includes(route)) {
+                route = 'acasa';
+            }
+
+            // Ascunde toate paginile și afișează doar pagina selectată
+            Object.keys(pageViews).forEach(key => {
+                if (key === route) {
+                    pageViews[key].classList.remove('active');
+                    // Forțează reflow pentru a relansa animația fade-in
+                    void pageViews[key].offsetWidth;
+                    pageViews[key].classList.add('active');
+                } else {
+                    pageViews[key].classList.remove('active');
+                }
+            });
+
+            // Actualizează starea activă în bara de navigare
+            navLinks.forEach(link => {
+                const linkRoute = link.getAttribute('data-route');
+                // Stilizează doar link-urile din header și meniul mobil
+                if (link.closest('header')) {
+                    if (linkRoute === route && !link.querySelector('span')) {
+                        link.classList.add('bg-primary-50', 'dark:bg-primary-900/40', 'text-primary-700', 'dark:text-primary-300', 'font-semibold');
+                        link.classList.remove('text-slate-600', 'dark:text-slate-300', 'hover:bg-slate-100', 'dark:hover:bg-slate-800');
+                    } else if (!link.querySelector('span')) {
+                        link.classList.remove('bg-primary-50', 'dark:bg-primary-900/40', 'text-primary-700', 'dark:text-primary-300', 'font-semibold');
+                        link.classList.add('text-slate-600', 'dark:text-slate-300', 'hover:bg-slate-100', 'dark:hover:bg-slate-800');
+                    }
+                }
+            });
+
+            // Actualizează titlul tab-ului și hash-ul URL
+            document.title = pageTitles[route] || pageTitles.acasa;
+            if (updateHash && window.location.hash !== `#${route}`) {
+                history.pushState({ route }, '', `#${route}`);
+            }
+
+            // Derulare automată în partea de sus a paginii
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Interceptează click-urile pe link-urile de navigare internă
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                const route = link.getAttribute('data-route');
+                if (route) {
+                    e.preventDefault();
+                    navigateTo(route, true);
+                    // Închide meniul mobil dacă este deschis
+                    document.getElementById('mobile-menu').classList.add('hidden');
+                }
+            });
+        });
+
+        // Suport pentru butoanele Back / Forward ale browserului
+        window.addEventListener('hashchange', () => {
+            const hashRoute = window.location.hash.replace('#', '');
+            navigateTo(hashRoute || 'acasa', false);
+        });
+
+        // Inițializare rută la încărcarea paginii
+        window.addEventListener('DOMContentLoaded', () => {
+            const initialRoute = window.location.hash.replace('#', '') || 'acasa';
+            navigateTo(initialRoute, false);
+        });
+
+        // 2. Gestionare Temă (Light / Dark Mode)
         const themeToggleBtn = document.getElementById('theme-toggle');
         const htmlElement = document.documentElement;
 
-        // Verifică preferința salvată sau tema sistemului
         if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             htmlElement.classList.add('dark');
         } else {
@@ -645,29 +950,18 @@
 
         themeToggleBtn.addEventListener('click', () => {
             htmlElement.classList.toggle('dark');
-            if (htmlElement.classList.contains('dark')) {
-                localStorage.setItem('theme', 'dark');
-            } else {
-                localStorage.setItem('theme', 'light');
-            }
+            localStorage.setItem('theme', htmlElement.classList.contains('dark') ? 'dark' : 'light');
         });
 
-        // 2. Meniu Mobil
+        // 3. Meniu Mobil
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
-        const mobileLinks = document.querySelectorAll('.mobile-link');
 
         mobileMenuBtn.addEventListener('click', () => {
             mobileMenu.classList.toggle('hidden');
         });
 
-        mobileLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                mobileMenu.classList.add('hidden');
-            });
-        });
-
-        // 3. Afișare / Ascundere Rezumat (Abstract) la Publicații
+        // 4. Afișare / Ascundere Rezumat (Abstract) la Publicații
         function toggleAbstract(button) {
             const article = button.closest('article');
             const abstractBox = article.querySelector('.abstract-box');
@@ -682,34 +976,95 @@
             }
         }
 
-        // 4. Filtrare Publicații pe Ani
+        // 5. Filtrare Combinată Publicații (An + Tip + Căutare Text)
         const filterButtons = document.querySelectorAll('.filter-btn');
+        const typeFilterSelect = document.getElementById('type-filter');
+        const searchInput = document.getElementById('pub-search');
         const publications = document.querySelectorAll('.publication-item');
+        const pubCountLabel = document.getElementById('pub-count');
+        const noPubsMsg = document.getElementById('no-pubs-msg');
+
+        let currentYearFilter = 'all';
+        let currentTypeFilter = 'all';
+        let currentSearchQuery = '';
+
+        function filterPublications() {
+            let visibleCount = 0;
+
+            publications.forEach(pub => {
+                const pubYear = pub.getAttribute('data-year');
+                const pubType = pub.getAttribute('data-type');
+                const pubText = pub.textContent.toLowerCase();
+
+                const matchesYear = currentYearFilter === 'all' || pubYear === currentYearFilter;
+                const matchesType = currentTypeFilter === 'all' || pubType === currentTypeFilter;
+                const matchesSearch = currentSearchQuery === '' || pubText.includes(currentSearchQuery);
+
+                if (matchesYear && matchesType && matchesSearch) {
+                    pub.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    pub.style.display = 'none';
+                }
+            });
+
+            pubCountLabel.textContent = visibleCount === 1 
+                ? 'Se afișează 1 publicație' 
+                : `Se afișează ${visibleCount} publicații`;
+
+            if (visibleCount === 0) {
+                noPubsMsg.classList.remove('hidden');
+            } else {
+                noPubsMsg.classList.add('hidden');
+            }
+        }
 
         filterButtons.forEach(btn => {
             btn.addEventListener('click', () => {
-                const selectedYear = btn.getAttribute('data-year');
+                currentYearFilter = btn.getAttribute('data-year');
 
-                // Actualizare stil butoane active
                 filterButtons.forEach(b => {
                     b.classList.remove('bg-primary-600', 'text-white', 'active');
-                    b.classList.add('bg-white', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300', 'border', 'border-slate-200', 'dark:border-slate-700');
+                    b.classList.add('bg-slate-50', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300', 'border', 'border-slate-200', 'dark:border-slate-700');
                 });
-                btn.classList.remove('bg-white', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300', 'border', 'border-slate-200', 'dark:border-slate-700');
+                btn.classList.remove('bg-slate-50', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300', 'border', 'border-slate-200', 'dark:border-slate-700');
                 btn.classList.add('bg-primary-600', 'text-white', 'active');
 
-                // Filtrare carduri
-                publications.forEach(pub => {
-                    if (selectedYear === 'all' || pub.getAttribute('data-year') === selectedYear) {
-                        pub.style.display = 'block';
-                    } else {
-                        pub.style.display = 'none';
-                    }
-                });
+                filterPublications();
             });
         });
 
-        // 5. Sistem Notificare Toast și Copiere în Clipboard
+        typeFilterSelect.addEventListener('change', (e) => {
+            currentTypeFilter = e.target.value;
+            filterPublications();
+        });
+
+        searchInput.addEventListener('input', (e) => {
+            currentSearchQuery = e.target.value.trim().toLowerCase();
+            filterPublications();
+        });
+
+        function resetPublicationFilters() {
+            currentYearFilter = 'all';
+            currentTypeFilter = 'all';
+            currentSearchQuery = '';
+            searchInput.value = '';
+            typeFilterSelect.value = 'all';
+
+            filterButtons.forEach(b => {
+                if (b.getAttribute('data-year') === 'all') {
+                    b.classList.remove('bg-slate-50', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300', 'border', 'border-slate-200', 'dark:border-slate-700');
+                    b.classList.add('bg-primary-600', 'text-white', 'active');
+                } else {
+                    b.classList.remove('bg-primary-600', 'text-white', 'active');
+                    b.classList.add('bg-slate-50', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300', 'border', 'border-slate-200', 'dark:border-slate-700');
+                }
+            });
+
+            filterPublications();
+        }
+
+        // 6. Sistem Notificare Toast și Copiere în Clipboard
         let toastTimeout;
         function showToast(message) {
             const toast = document.getElementById('toast');
@@ -749,7 +1104,8 @@
             'stanciu2025federated': `@article{stanciu2025federated,\n  title={Optimizarea Agregarii Asincrone in Invatarea Federata cu Confidentialitate Diferentiala},\n  author={Stanciu, Mihai and Ionescu, Andrei and Georgescu, Cristina},\n  journal={IEEE Transactions on Pattern Analysis and Machine Intelligence},\n  volume={47},\n  number={8},\n  pages={4510--4526},\n  year={2025}\n}`,
             'ionescu2025romedbench': `@inproceedings{ionescu2025romedbench,\n  title={RoMedBench: Un Set de Referinta pentru Evaluarea Rationamentului Clinic in Limba Romana},\n  author={Ionescu, Andrei and Vasilescu, Ioana and Marin, Vlad},\n  booktitle={Proceedings of the 63rd Annual Meeting of the ACL},\n  pages={2104--2119},\n  year={2025}\n}`,
             'ionescu2024spectral': `@article{ionescu2024spectral,\n  title={Compresia Structurata a Modelelor Transformer prin Distilare Spectrala},\n  author={Ionescu, Andrei and Lindqvist, Stefan K.},\n  journal={Journal of Machine Learning Research},\n  volume={25},\n  pages={1--34},\n  year={2024}\n}`,
-            'munteanu2024anomaly': `@inproceedings{munteanu2024anomaly,\n  title={Detectia Anomaliilor in Serii Temporale Multi-Senzor Fara Supraveghere},\n  author={Munteanu, Laura and Ionescu, Andrei and Toader, Bogdan},\n  booktitle={International Conference on Machine Learning (ICML)},\n  pages={8812--8827},\n  year={2024}\n}`
+            'munteanu2024anomaly': `@inproceedings{munteanu2024anomaly,\n  title={Detectia Anomaliilor in Serii Temporale Multi-Senzor Fara Supraveghere},\n  author={Munteanu, Laura and Ionescu, Andrei and Toader, Bogdan},\n  booktitle={International Conference on Machine Learning (ICML)},\n  pages={8812--8827},\n  year={2024}\n}`,
+            'ionescu2023byzantine': `@article{ionescu2023byzantine,\n  title={O Analiza Sistematica a Protocoalelor de Consens Tolerante la Defecte Bizantine in Retele Edge},\n  author={Ionescu, Andrei and Weber, Lukas and Stoica, Ana-Maria},\n  journal={ACM Computing Surveys},\n  volume={55},\n  number={12},\n  pages={1--38},\n  year={2023}\n}`
         };
 
         function copyBibtex(key) {
